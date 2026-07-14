@@ -1,9 +1,8 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   Users,
@@ -22,12 +21,9 @@ import {
   ClipboardList,
   BookMarked,
   ChevronLeft,
-  Menu,
-  X,
-  Home,
   type LucideIcon,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import type { Role } from "@/lib/auth/roles";
 import { useSchool } from "@/hooks/use-school";
@@ -94,7 +90,6 @@ export function Sidebar() {
   const { user, role, signOut } = useAuth();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!role) return null;
 
@@ -102,32 +97,10 @@ export function Sidebar() {
 
   return (
     <>
-      <button
-        className="fixed top-4 left-4 z-50 md:hidden"
-        onClick={() => setMobileOpen(true)}
-        aria-label="Abrir menu"
-      >
-        <Menu className="h-5 w-5 text-neutral-600" />
-      </button>
-
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/40 z-40 md:hidden"
-            onClick={() => setMobileOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
       <aside
         className={cn(
-          "fixed md:sticky top-0 left-0 h-dvh bg-background border-r border-border flex flex-col z-40 transition-all duration-300",
-          collapsed ? "w-16" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          "hidden md:flex flex-col h-dvh bg-background border-r border-border z-40 transition-all duration-300 sticky top-0",
+          collapsed ? "w-16" : "w-64"
         )}
       >
         <div className="flex items-center justify-between px-4 h-16 border-b border-border">
@@ -139,44 +112,28 @@ export function Sidebar() {
               EduConecta
             </span>
           )}
-          <div className="flex items-center gap-1">
-            {mobileOpen && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setMobileOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:flex"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <ChevronLeft
-                className={cn(
-                  "h-4 w-4 transition-transform duration-200",
-                  collapsed && "rotate-180"
-                )}
-              />
-            </Button>
-          </div>
+          <button
+            className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            <ChevronLeft
+              className={cn(
+                "h-4 w-4 transition-transform duration-200",
+                collapsed && "rotate-180"
+              )}
+            />
+          </button>
         </div>
 
         {role === "dev" && !collapsed && <SchoolToggle />}
 
         <div className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto">
-          {navItems.map((item, i) => (
+          {navItems.map((item) => (
             <NavButton
               key={item.href}
               item={item}
               collapsed={collapsed}
               active={pathname === item.href}
-              delay={i * 0.03}
-              onClick={() => setMobileOpen(false)}
             />
           ))}
         </div>
@@ -184,12 +141,8 @@ export function Sidebar() {
         <div className="border-t border-border py-2 px-2 space-y-0.5">
           {!collapsed && (
             <div className="px-3 py-2">
-              <p className="text-xs text-muted-foreground truncate">
-                {user?.email}
-              </p>
-              <p className="text-xs font-medium text-foreground">
-                {ROLE_LABELS[role]}
-              </p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <p className="text-xs font-medium text-foreground">{ROLE_LABELS[role]}</p>
             </div>
           )}
           <button
@@ -204,6 +157,14 @@ export function Sidebar() {
           </button>
         </div>
       </aside>
+
+      <MobileBottomNav
+        navItems={navItems}
+        pathname={pathname}
+        role={role}
+        email={user?.email}
+        onSignOut={signOut}
+      />
     </>
   );
 }
@@ -212,27 +173,18 @@ function NavButton({
   item,
   collapsed,
   active,
-  delay,
-  onClick,
 }: {
   item: NavItem;
   collapsed: boolean;
   active: boolean;
-  delay: number;
-  onClick: () => void;
 }) {
   return (
     <motion.a
       href={item.href}
-      onClick={onClick}
       initial={false}
-      animate={{
-        backgroundColor: active
-          ? "var(--color-accent)"
-          : "transparent",
-      }}
+      animate={{ backgroundColor: active ? "var(--color-accent)" : "transparent" }}
       whileHover={{ backgroundColor: "var(--color-accent)" }}
-      transition={{ duration: 0.15, delay }}
+      transition={{ duration: 0.15 }}
       className={cn(
         "flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-150",
         collapsed && "justify-center px-0 mx-auto w-10 h-10",
@@ -242,5 +194,106 @@ function NavButton({
       <item.icon className="h-4 w-4 shrink-0" />
       {!collapsed && <span>{item.label}</span>}
     </motion.a>
+  );
+}
+
+function MobileBottomNav({
+  navItems,
+  pathname,
+  role,
+  email,
+  onSignOut,
+}: {
+  navItems: NavItem[];
+  pathname: string;
+  role: Role;
+  email?: string;
+  onSignOut: () => void;
+}) {
+  return (
+    <>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 flex items-center justify-around h-16 px-2 pb-safe">
+        {navItems.slice(0, 5).map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <a
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 flex-1",
+                isActive ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              <div className="relative">
+                {isActive && (
+                  <motion.div
+                    layoutId="mobile-indicator"
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-foreground"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <item.icon className="h-5 w-5" />
+              </div>
+              <span className="text-[10px] leading-tight truncate max-w-full">
+                {item.label}
+              </span>
+            </a>
+          );
+        })}
+        {navItems.length > 5 && (
+          <MoreMenu navItems={navItems.slice(5)} pathname={pathname} />
+        )}
+      </nav>
+      <div className="md:hidden h-16" />
+    </>
+  );
+}
+
+function MoreMenu({
+  navItems,
+  pathname,
+}: {
+  navItems: NavItem[];
+  pathname: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-muted-foreground"
+      >
+        <div className="flex gap-0.5">
+          <span className="w-1 h-1 rounded-full bg-current" />
+          <span className="w-1 h-1 rounded-full bg-current" />
+          <span className="w-1 h-1 rounded-full bg-current" />
+        </div>
+        <span className="text-[10px]">Mas</span>
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute bottom-full right-0 mb-2 bg-background border border-border shadow-lg min-w-40 z-50">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2.5 text-sm transition-colors",
+                  pathname === item.href
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
