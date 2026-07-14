@@ -19,7 +19,7 @@ export default function DevDashboard() {
   const { schoolType } = useSchool();
 
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-7xl">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

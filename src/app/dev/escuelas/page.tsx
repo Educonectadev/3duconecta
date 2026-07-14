@@ -16,7 +16,7 @@ export default function EscuelasPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="max-w-5xl"
+      className="max-w-7xl"
     >
       <div className="flex items-center justify-between mb-8">
         <div>

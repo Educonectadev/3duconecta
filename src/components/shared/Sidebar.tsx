@@ -23,8 +23,7 @@ import {
   ChevronLeft,
   type LucideIcon,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Role } from "@/lib/auth/roles";
 import { useSchool } from "@/hooks/use-school";
 import { SchoolToggle } from "@/components/shared/SchoolToggle";
@@ -99,11 +98,11 @@ export function Sidebar() {
     <>
       <aside
         className={cn(
-          "hidden md:flex flex-col h-dvh bg-background border-r border-border z-40 transition-all duration-300 sticky top-0",
+          "hidden md:flex flex-col h-dvh bg-background border-r border-border z-40 sticky top-0 transition-[width] duration-200",
           collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex items-center justify-between px-4 h-16 border-b border-border">
+        <div className="flex items-center justify-between px-4 h-16 border-b border-border shrink-0">
           {collapsed ? (
             <span className="w-2 h-2 bg-foreground" />
           ) : (
@@ -113,7 +112,7 @@ export function Sidebar() {
             </span>
           )}
           <button
-            className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft
@@ -125,7 +124,11 @@ export function Sidebar() {
           </button>
         </div>
 
-        {role === "dev" && !collapsed && <SchoolToggle />}
+        {role === "dev" && !collapsed && (
+          <div className="shrink-0">
+            <SchoolToggle />
+          </div>
+        )}
 
         <div className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => (
@@ -138,7 +141,7 @@ export function Sidebar() {
           ))}
         </div>
 
-        <div className="border-t border-border py-2 px-2 space-y-0.5">
+        <div className="border-t border-border py-2 px-2 space-y-0.5 shrink-0">
           {!collapsed && (
             <div className="px-3 py-2">
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
@@ -148,7 +151,7 @@ export function Sidebar() {
           <button
             onClick={signOut}
             className={cn(
-              "flex items-center gap-3 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150",
+              "flex items-center gap-3 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground",
               collapsed && "justify-center px-0"
             )}
           >
@@ -179,29 +182,25 @@ function NavButton({
   active: boolean;
 }) {
   return (
-    <motion.a
+    <a
       href={item.href}
-      initial={false}
-      animate={{ backgroundColor: active ? "var(--color-accent)" : "transparent" }}
-      whileHover={{ backgroundColor: "var(--color-accent)" }}
-      transition={{ duration: 0.15 }}
       className={cn(
-        "flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-150",
+        "flex items-center gap-3 px-3 py-2 text-sm",
         collapsed && "justify-center px-0 mx-auto w-10 h-10",
-        active ? "text-foreground font-medium" : "text-muted-foreground"
+        active
+          ? "bg-accent text-foreground font-medium"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
       )}
     >
       <item.icon className="h-4 w-4 shrink-0" />
       {!collapsed && <span>{item.label}</span>}
-    </motion.a>
+    </a>
   );
 }
 
 function MobileBottomNav({
   navItems,
   pathname,
-  role,
-  email,
   onSignOut,
 }: {
   navItems: NavItem[];
@@ -212,7 +211,7 @@ function MobileBottomNav({
 }) {
   return (
     <>
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 flex items-center justify-around h-16 px-2 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 flex items-stretch h-14">
         {navItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -220,23 +219,17 @@ function MobileBottomNav({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 flex-1",
+                "flex flex-col items-center justify-center flex-1 min-w-0 gap-0",
                 isActive ? "text-foreground" : "text-muted-foreground"
               )}
             >
-              <div className="relative">
+              <div className="relative flex items-center justify-center">
                 {isActive && (
-                  <motion.div
-                    layoutId="mobile-indicator"
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-foreground"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-foreground" />
                 )}
                 <item.icon className="h-5 w-5" />
               </div>
-              <span className="text-[10px] leading-tight truncate max-w-full">
-                {item.label}
-              </span>
+              <span className="text-[9px] leading-tight mt-0.5">{item.label}</span>
             </a>
           );
         })}
@@ -245,13 +238,13 @@ function MobileBottomNav({
         )}
         <button
           onClick={onSignOut}
-          className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 text-muted-foreground"
+          className="flex flex-col items-center justify-center flex-1 min-w-0 gap-0 text-muted-foreground"
         >
           <LogOut className="h-5 w-5" />
-          <span className="text-[10px] leading-tight">Salir</span>
+          <span className="text-[9px] leading-tight mt-0.5">Salir</span>
         </button>
       </nav>
-      <div className="md:hidden h-16" />
+      <div className="md:hidden h-14" />
     </>
   );
 }
@@ -264,31 +257,33 @@ function MoreMenu({
   pathname: string;
 }) {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="relative">
+    <div className="flex-1 min-w-0">
       <button
+        ref={btnRef}
         onClick={() => setOpen(!open)}
-        className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-muted-foreground"
+        className="flex flex-col items-center justify-center w-full h-full gap-0 text-muted-foreground"
       >
         <div className="flex gap-0.5">
-          <span className="w-1 h-1 rounded-full bg-current" />
-          <span className="w-1 h-1 rounded-full bg-current" />
-          <span className="w-1 h-1 rounded-full bg-current" />
+          <span className="w-1 h-1 bg-current" />
+          <span className="w-1 h-1 bg-current" />
+          <span className="w-1 h-1 bg-current" />
         </div>
-        <span className="text-[10px]">Mas</span>
+        <span className="text-[9px] leading-tight mt-0.5">Mas</span>
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute bottom-full right-0 mb-2 bg-background border border-border shadow-lg min-w-40 z-50">
+          <div className="absolute bottom-14 right-0 mb-2 bg-background border border-border shadow-lg min-w-40 z-50">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 text-sm transition-colors",
+                  "flex items-center gap-3 px-4 py-2.5 text-sm",
                   pathname === item.href
                     ? "text-foreground font-medium"
                     : "text-muted-foreground"

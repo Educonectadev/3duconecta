@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function PadrePagosPage() {
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-7xl">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-xs text-muted-foreground tracking-wide uppercase mb-1">Padre</p>
         <h1 className="text-2xl font-semibold tracking-tight">Pagos</h1>

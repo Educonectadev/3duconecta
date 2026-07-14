@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function DirectorComunicadosPage() {
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-7xl">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between mb-8">
           <div>
