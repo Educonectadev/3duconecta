@@ -1,48 +1,35 @@
-import { createClient } from "@/lib/supabase/client";
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
 import type { Role } from "@/lib/auth/roles";
 
+interface DemoUser {
+  email: string;
+  password: string;
+  role: Role;
+  label: string;
+}
+
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
+  const [user, setUser] = useState<DemoUser | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        setRole((user.user_metadata?.role || user.app_metadata?.role) as Role);
-      }
-      setLoading(false);
-    };
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      setRole(
-        (currentUser?.user_metadata?.role ||
-          currentUser?.app_metadata?.role) as Role
-      );
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    const stored = localStorage.getItem("educonecta_demo_user");
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
+    setLoading(false);
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const signOut = () => {
+    localStorage.removeItem("educonecta_demo_user");
+    document.cookie = "educonecta_demo_user=; path=/; max-age=0";
+    setUser(null);
     router.push("/login");
   };
 
-  return { user, role, loading, signOut };
+  return { user, role: user?.role ?? null, loading, signOut };
 }
