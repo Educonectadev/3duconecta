@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const DEMO_USERS = [
   { email: "dev@educonecta.pe", password: "demo123", role: "dev", label: "Desarrollador" },
@@ -20,7 +21,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -39,56 +40,105 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight mb-1">EduConecta</h1>
-          <p className="text-sm text-neutral-500">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-sm"
+      >
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-2.5 h-2.5 bg-foreground" />
+            <h1 className="text-lg font-semibold tracking-tight">EduConecta</h1>
+          </div>
+          <p className="text-sm text-muted-foreground">
             Inicia sesion para acceder al sistema
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1.5">Correo electronico</label>
-            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-neutral-300 bg-white text-sm focus:outline-none focus:border-neutral-900 transition-colors"
-              placeholder="correo@ejemplo.com" required />
+            <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">
+              Correo electronico
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-0 py-2 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
+              placeholder="correo@ejemplo.com"
+              required
+            />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1.5">Contrasena</label>
-            <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-neutral-300 bg-white text-sm focus:outline-none focus:border-neutral-900 transition-colors"
-              placeholder="********" required />
+            <label htmlFor="password" className="block text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">
+              Contrasena
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-0 py-2 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
+              placeholder="********"
+              required
+            />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          <AnimatedError error={error} />
 
-          <button type="submit" disabled={loading}
-            className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 disabled:opacity-50 transition-colors">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2.5 bg-foreground text-background text-sm font-medium hover:opacity-90 disabled:opacity-50 transition-all duration-200"
+          >
             {loading ? "Ingresando..." : "Iniciar Sesion"}
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-neutral-200">
-          <p className="text-xs font-medium text-neutral-500 mb-3">CUENTAS DE DEMO</p>
-          <div className="space-y-2">
+        <div className="mt-10 pt-6 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-3 tracking-wide uppercase">
+            Cuentas de prueba
+          </p>
+          <div className="space-y-1.5">
             {DEMO_USERS.map((u) => (
-              <button key={u.role}
+              <motion.button
+                key={u.role}
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.15 }}
                 onClick={() => { setEmail(u.email); setPassword(u.password); }}
-                className="w-full text-left px-3 py-2 text-xs border border-neutral-200 hover:bg-neutral-100 transition-colors">
-                <span className="font-medium">{u.label}</span>
-                <span className="text-neutral-400 ml-2">{u.email}</span>
-              </button>
+                className="w-full text-left px-3 py-2 text-xs border border-border hover:bg-accent transition-colors duration-150"
+              >
+                <span className="font-medium text-foreground">{u.label}</span>
+                <span className="text-muted-foreground ml-2">{u.email}</span>
+              </motion.button>
             ))}
           </div>
         </div>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           {"No tienes cuenta? "}
-          <Link href="/register" className="text-neutral-900 underline underline-offset-2">Solicitar Registro</Link>
+          <Link href="/register" className="text-foreground underline underline-offset-4 hover:no-underline transition-all">
+            Solicitar Registro
+          </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
+  );
+}
+
+function AnimatedError({ error }: { error: string }) {
+  if (!error) return null;
+  return (
+    <motion.p
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      className="text-xs text-red-500"
+    >
+      {error}
+    </motion.p>
   );
 }

@@ -1,20 +1,18 @@
 "use client";
 import { motion } from "framer-motion";
-import { TrendingUp } from "lucide-react";
 
 export default function AlumnoNotasPage() {
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-      <div className="mb-8">
+    <div className="max-w-5xl">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+        <p className="text-xs text-muted-foreground tracking-wide uppercase mb-1">Alumno</p>
         <h1 className="text-2xl font-semibold tracking-tight">Notas</h1>
-        <p className="text-sm text-neutral-500 mt-1">Calificaciones por curso</p>
-      </div>
-      <div className="border border-neutral-200 p-5">
-        <div className="flex flex-col items-center justify-center py-12">
-          <TrendingUp className="h-10 w-10 text-neutral-300 mb-4" />
-          <p className="text-sm text-neutral-400">No hay notas disponibles</p>
+        <p className="text-sm text-muted-foreground mt-1">Calificaciones por curso</p>
+
+        <div className="border border-border mt-8 p-8 text-center">
+          <p className="text-sm text-muted-foreground">No hay notas disponibles.</p>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

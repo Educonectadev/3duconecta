@@ -19,11 +19,12 @@ import {
   UserPlus,
   Building2,
   Settings,
-  Shield,
   ClipboardList,
   BookMarked,
   ChevronLeft,
   Menu,
+  X,
+  Home,
   type LucideIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -80,6 +81,15 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
   ],
 };
 
+const ROLE_LABELS: Record<Role, string> = {
+  dev: "Desarrollador",
+  director: "Director",
+  secretaria: "Secretaria",
+  docente: "Docente",
+  alumno: "Alumno",
+  padre: "Padre de Familia",
+};
+
 export function Sidebar() {
   const { user, role, signOut } = useAuth();
   const pathname = usePathname();
@@ -93,10 +103,11 @@ export function Sidebar() {
   return (
     <>
       <button
-        className="fixed top-3 left-3 z-50 md:hidden"
+        className="fixed top-4 left-4 z-50 md:hidden"
         onClick={() => setMobileOpen(true)}
+        aria-label="Abrir menu"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-5 w-5 text-neutral-600" />
       </button>
 
       <AnimatePresence>
@@ -105,7 +116,8 @@ export function Sidebar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
         )}
@@ -113,56 +125,83 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "fixed md:sticky top-0 left-0 h-screen bg-neutral-900 text-white flex flex-col z-40 transition-all duration-300",
+          "fixed md:sticky top-0 left-0 h-dvh bg-background border-r border-border flex flex-col z-40 transition-all duration-300",
           collapsed ? "w-16" : "w-64",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
-          {!collapsed && (
-            <span className="font-semibold text-lg tracking-tight">EduConecta</span>
+        <div className="flex items-center justify-between px-4 h-16 border-b border-border">
+          {collapsed ? (
+            <span className="w-2 h-2 bg-foreground" />
+          ) : (
+            <span className="font-semibold text-base tracking-tight flex items-center gap-2">
+              <span className="w-2 h-2 bg-foreground" />
+              EduConecta
+            </span>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-neutral-700 hidden md:flex"
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            <ChevronLeft
-              className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")}
-            />
-          </Button>
+          <div className="flex items-center gap-1">
+            {mobileOpen && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setMobileOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:flex"
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              <ChevronLeft
+                className={cn(
+                  "h-4 w-4 transition-transform duration-200",
+                  collapsed && "rotate-180"
+                )}
+              />
+            </Button>
+          </div>
         </div>
 
         {role === "dev" && !collapsed && <SchoolToggle />}
 
-        <nav className="flex-1 p-2 space-y-1">
-          {navItems.map((item) => (
+        <div className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto">
+          {navItems.map((item, i) => (
             <NavButton
               key={item.href}
               item={item}
               collapsed={collapsed}
               active={pathname === item.href}
+              delay={i * 0.03}
               onClick={() => setMobileOpen(false)}
             />
           ))}
-        </nav>
+        </div>
 
-        <div className="p-2 border-t border-neutral-700 space-y-1">
+        <div className="border-t border-border py-2 px-2 space-y-0.5">
           {!collapsed && (
-            <div className="px-3 py-2 text-xs text-neutral-400 truncate">
-              {user?.email}
+            <div className="px-3 py-2">
+              <p className="text-xs text-muted-foreground truncate">
+                {user?.email}
+              </p>
+              <p className="text-xs font-medium text-foreground">
+                {ROLE_LABELS[role]}
+              </p>
             </div>
           )}
-          <Button
-            variant="ghost"
-            size={collapsed ? "icon" : "default"}
-            className="w-full justify-start text-white hover:bg-neutral-700"
+          <button
             onClick={signOut}
+            className={cn(
+              "flex items-center gap-3 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150",
+              collapsed && "justify-center px-0"
+            )}
           >
-            <LogOut className="h-4 w-4" />
-            {!collapsed && <span className="ml-2">Cerrar Sesion</span>}
-          </Button>
+            <LogOut className="h-4 w-4 shrink-0" />
+            {!collapsed && <span>Cerrar Sesion</span>}
+          </button>
         </div>
       </aside>
     </>
@@ -173,26 +212,35 @@ function NavButton({
   item,
   collapsed,
   active,
+  delay,
   onClick,
 }: {
   item: NavItem;
   collapsed: boolean;
   active: boolean;
+  delay: number;
   onClick: () => void;
 }) {
   return (
-    <a href={item.href} onClick={onClick}>
-      <Button
-        variant="ghost"
-        size={collapsed ? "icon" : "default"}
-        className={cn(
-          "w-full justify-start text-white hover:bg-neutral-700 transition-colors duration-200",
-          active && "bg-neutral-700"
-        )}
-      >
-        <item.icon className="h-4 w-4 shrink-0" />
-        {!collapsed && <span className="ml-3 text-sm">{item.label}</span>}
-      </Button>
-    </a>
+    <motion.a
+      href={item.href}
+      onClick={onClick}
+      initial={false}
+      animate={{
+        backgroundColor: active
+          ? "var(--color-accent)"
+          : "transparent",
+      }}
+      whileHover={{ backgroundColor: "var(--color-accent)" }}
+      transition={{ duration: 0.15, delay }}
+      className={cn(
+        "flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-150",
+        collapsed && "justify-center px-0 mx-auto w-10 h-10",
+        active ? "text-foreground font-medium" : "text-muted-foreground"
+      )}
+    >
+      <item.icon className="h-4 w-4 shrink-0" />
+      {!collapsed && <span>{item.label}</span>}
+    </motion.a>
   );
 }
