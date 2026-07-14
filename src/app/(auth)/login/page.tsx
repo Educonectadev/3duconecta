@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 const DEMO_USERS = [
   { email: "dev@educonecta.pe", password: "demo123", role: "dev", label: "Desarrollador" },
@@ -29,7 +28,7 @@ export default function LoginPage() {
     const user = DEMO_USERS.find((u) => u.email === email && u.password === password);
 
     if (!user) {
-      setError("Credenciales incorrectas. Usa las cuentas demo de abajo.");
+      setError("Credenciales incorrectas. Usa las cuentas demo.");
       setLoading(false);
       return;
     }
@@ -40,26 +39,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-sm"
-      >
-        <div className="mb-10">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-2.5 h-2.5 bg-foreground" />
-            <h1 className="text-lg font-semibold tracking-tight">EduConecta</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Inicia sesion para acceder al sistema
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-16">
+      <div className="w-full max-w-sm">
+        <Link href="/" className="inline-flex items-center gap-2 mb-10 group">
+          <span className="w-2 h-2 bg-foreground rotate-45 group-hover:scale-125 transition-transform duration-300" />
+          <span className="text-sm font-semibold tracking-tight">EduConecta</span>
+        </Link>
+
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold tracking-tight mb-1.5">Iniciar Sesion</h1>
+          <p className="text-sm text-muted-foreground">Accede al sistema con tus credenciales</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">
+            <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-2 tracking-widest uppercase">
               Correo electronico
             </label>
             <input
@@ -67,13 +61,13 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-0 py-2 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
+              className="w-full px-0 py-2.5 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
               placeholder="correo@ejemplo.com"
               required
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">
+            <label htmlFor="password" className="block text-xs font-medium text-muted-foreground mb-2 tracking-widest uppercase">
               Contrasena
             </label>
             <input
@@ -81,64 +75,48 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-0 py-2 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
+              className="w-full px-0 py-2.5 bg-transparent border-0 border-b border-border text-sm focus:border-foreground outline-none transition-colors"
               placeholder="********"
               required
             />
           </div>
 
-          <AnimatedError error={error} />
+          {error && <p className="text-xs text-red-500">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-foreground text-background text-sm font-medium hover:opacity-90 disabled:opacity-50 transition-all duration-200"
+            className="w-full py-3 bg-foreground text-background text-sm font-medium rounded-full hover:opacity-90 disabled:opacity-50 transition-all duration-300"
           >
             {loading ? "Ingresando..." : "Iniciar Sesion"}
           </button>
         </form>
 
-        <div className="mt-10 pt-6 border-t border-border">
-          <p className="text-xs font-medium text-muted-foreground mb-3 tracking-wide uppercase">
+        <div className="mt-12 pt-8 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-4 tracking-widest uppercase">
             Cuentas de prueba
           </p>
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             {DEMO_USERS.map((u) => (
-              <motion.button
+              <button
                 key={u.role}
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.15 }}
                 onClick={() => { setEmail(u.email); setPassword(u.password); }}
-                className="w-full text-left px-3 py-2 text-xs border border-border hover:bg-accent transition-colors duration-150"
+                className="w-full text-left px-4 py-2.5 text-xs border border-border hover:border-foreground transition-all duration-300 group"
               >
                 <span className="font-medium text-foreground">{u.label}</span>
                 <span className="text-muted-foreground ml-2">{u.email}</span>
-              </motion.button>
+              </button>
             ))}
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
+        <p className="mt-8 text-center text-xs text-muted-foreground">
           {"No tienes cuenta? "}
           <Link href="/register" className="text-foreground underline underline-offset-4 hover:no-underline transition-all">
             Solicitar Registro
           </Link>
         </p>
-      </motion.div>
+      </div>
     </div>
-  );
-}
-
-function AnimatedError({ error }: { error: string }) {
-  if (!error) return null;
-  return (
-    <motion.p
-      initial={{ opacity: 0, y: -4 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -4 }}
-      className="text-xs text-red-500"
-    >
-      {error}
-    </motion.p>
   );
 }
