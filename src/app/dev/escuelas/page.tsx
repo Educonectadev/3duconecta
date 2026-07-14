@@ -83,25 +83,27 @@ export default function EscuelasPage() {
       </AnimatePresence>
 
       <div className="border border-border">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase">Nombre</th>
-              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase">Codigo</th>
-              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase">Tipo</th>
-              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase">Region</th>
-              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase">Estado</th>
+              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase whitespace-nowrap">Nombre</th>
+              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase whitespace-nowrap">Codigo</th>
+              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase whitespace-nowrap">Tipo</th>
+              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase whitespace-nowrap">Region</th>
+              <th className="text-left px-4 py-3 font-medium text-xs text-muted-foreground tracking-wide uppercase whitespace-nowrap">Estado</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={5} className="px-4 py-16 text-center">
+              <td colSpan={5} className="px-4 py-16 text-center whitespace-nowrap">
                 <p className="text-sm text-muted-foreground">No hay escuelas registradas.</p>
                 <p className="text-xs text-muted-foreground mt-1">Crea la primera escuela para comenzar.</p>
               </td>
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </motion.div>
   );

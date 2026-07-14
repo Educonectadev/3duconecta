@@ -24,24 +24,26 @@ export default function SecretariaPadresPage() {
         </div>
 
         <div className="border border-border mt-6">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium">Nombre</th>
-                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium">DNI</th>
-                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium">Parentesco</th>
-                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium">Hijos</th>
-                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium">Telefono</th>
+                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium whitespace-nowrap">Nombre</th>
+                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium whitespace-nowrap">DNI</th>
+                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium whitespace-nowrap">Parentesco</th>
+                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium whitespace-nowrap">Hijos</th>
+                <th className="text-left px-4 py-3 text-xs text-muted-foreground tracking-wide uppercase font-medium whitespace-nowrap">Telefono</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center">
+                <td colSpan={5} className="px-4 py-12 text-center whitespace-nowrap">
                   <p className="text-sm text-muted-foreground">No hay padres registrados.</p>
                 </td>
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       </motion.div>
     </div>
