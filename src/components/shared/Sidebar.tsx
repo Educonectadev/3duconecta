@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useAuth } from "@/hooks/use-auth";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
   Users,
@@ -21,17 +21,17 @@ import {
   ClipboardList,
   BookMarked,
   ChevronLeft,
+  ChevronRight,
   type LucideIcon,
-} from "lucide-react";
-import { useRef, useState } from "react";
-import type { Role } from "@/lib/auth/roles";
-import { useSchool } from "@/hooks/use-school";
-import { SchoolToggle } from "@/components/shared/SchoolToggle";
+} from "lucide-react"
+import { useState } from "react"
+import type { Role } from "@/lib/auth/roles"
+import { SchoolToggle } from "@/components/shared/SchoolToggle"
 
 interface NavItem {
-  label: string;
-  href: string;
-  icon: LucideIcon;
+  label: string
+  href: string
+  icon: LucideIcon
 }
 
 const NAV_ITEMS: Record<Role, NavItem[]> = {
@@ -74,7 +74,7 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
     { label: "Pagos", href: "/padre/pagos", icon: CreditCard },
     { label: "Comunicados", href: "/padre/comunicados", icon: MessageSquare },
   ],
-};
+}
 
 const ROLE_LABELS: Record<Role, string> = {
   dev: "Desarrollador",
@@ -83,81 +83,108 @@ const ROLE_LABELS: Record<Role, string> = {
   docente: "Docente",
   alumno: "Alumno",
   padre: "Padre de Familia",
-};
+}
 
 export function Sidebar() {
-  const { user, role, signOut } = useAuth();
-  const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const { user, role, signOut } = useAuth()
+  const pathname = usePathname()
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
-  if (!role) return null;
+  if (!role) return null
 
-  const navItems = NAV_ITEMS[role];
+  const navItems = NAV_ITEMS[role]
 
   return (
     <>
       <aside
         className={cn(
-          "hidden md:flex flex-col h-dvh bg-sidebar border-r border-sidebar-border z-40 sticky top-0 transition-[width] duration-300",
-          collapsed ? "w-16" : "w-64"
+          "hidden md:flex fixed top-0 left-0 bg-sidebar border-r border-sidebar-border h-screen overflow-y-auto transition-all duration-300 ease-in-out z-40",
+          isCollapsed ? "w-16" : "w-60"
         )}
       >
-        <div className="flex items-center justify-between px-4 h-14 border-b border-sidebar-border shrink-0">
-          {collapsed ? (
-            <span className="w-2 h-2 bg-primary rounded-full" />
-          ) : (
-            <span className="font-bold text-sm tracking-tight flex items-center gap-2.5">
-              <span className="w-2 h-2 bg-primary rounded-full" />
-              EduConecta
-            </span>
-          )}
-          <button
-            className="flex items-center justify-center w-7 h-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            <ChevronLeft
-              className={cn(
-                "h-4 w-4 transition-transform duration-300",
-                collapsed && "rotate-180"
-              )}
-            />
-          </button>
-        </div>
-
-        {role === "dev" && !collapsed && (
-          <div className="shrink-0">
-            <SchoolToggle />
-          </div>
-        )}
-
-        <div className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => (
-            <NavButton
-              key={item.href}
-              item={item}
-              collapsed={collapsed}
-              active={pathname === item.href}
-            />
-          ))}
-        </div>
-
-        <div className="border-t border-sidebar-border py-2 px-2 space-y-0.5 shrink-0">
-          {!collapsed && (
-            <div className="px-3 py-2">
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-              <p className="text-xs font-medium text-foreground">{ROLE_LABELS[role]}</p>
-            </div>
-          )}
-          <button
-            onClick={signOut}
-            className={cn(
-              "flex items-center gap-3 w-full px-3 py-2 text-sm rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors",
-              collapsed && "justify-center px-0"
+        <div className={cn("p-4", isCollapsed && "px-2")}>
+          <div className={cn("mb-6 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
+            {!isCollapsed && (
+              <div>
+                <span className="text-base font-bold text-sidebar-foreground">EduConecta</span>
+              </div>
             )}
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Cerrar Sesion</span>}
-          </button>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className={cn(
+                "h-7 w-7 rounded-lg hover:bg-sidebar-accent flex items-center justify-center transition-colors",
+                isCollapsed && "mx-auto"
+              )}
+            >
+              {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {role === "dev" && !isCollapsed && (
+              <SchoolToggle />
+            )}
+
+            <div>
+              {!isCollapsed && (
+                <p className="text-[10px] font-semibold text-muted-foreground mb-2 uppercase tracking-wide px-2">
+                  NAVEGACION
+                </p>
+              )}
+              <nav className="space-y-0.5">
+                {navItems.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      title={isCollapsed ? item.label : undefined}
+                      className={cn(
+                        "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-normal transition-colors",
+                        isActive
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+                        isCollapsed && "justify-center"
+                      )}
+                    >
+                      <item.icon className={cn("w-4 h-4", isCollapsed && "w-4.5 h-4.5")} />
+                      {!isCollapsed && <span className="text-sm">{item.label}</span>}
+                    </a>
+                  )
+                })}
+              </nav>
+            </div>
+
+            {!isCollapsed && (
+              <div>
+                <p className="text-[10px] font-semibold text-muted-foreground mb-2 uppercase tracking-wide px-2">
+                  CUENTA
+                </p>
+                <div className="px-2.5 py-2">
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  <p className="text-xs font-medium text-foreground">{ROLE_LABELS[role]}</p>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-normal text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Cerrar Sesion</span>
+                </button>
+              </div>
+            )}
+
+            {isCollapsed && (
+              <nav className="space-y-0.5">
+                <button
+                  onClick={signOut}
+                  className="w-full flex items-center justify-center px-2.5 py-2 rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </nav>
+            )}
+          </div>
         </div>
       </aside>
 
@@ -165,37 +192,10 @@ export function Sidebar() {
         navItems={navItems}
         pathname={pathname}
         role={role}
-        email={user?.email}
         onSignOut={signOut}
       />
     </>
-  );
-}
-
-function NavButton({
-  item,
-  collapsed,
-  active,
-}: {
-  item: NavItem;
-  collapsed: boolean;
-  active: boolean;
-}) {
-  return (
-    <a
-      href={item.href}
-      className={cn(
-        "flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200",
-        collapsed && "justify-center px-0 mx-auto w-10 h-10",
-        active
-          ? "bg-primary/10 text-primary font-medium"
-          : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
-      )}
-    >
-      <item.icon className="h-4 w-4 shrink-0" />
-      {!collapsed && <span>{item.label}</span>}
-    </a>
-  );
+  )
 }
 
 function MobileBottomNav({
@@ -204,11 +204,10 @@ function MobileBottomNav({
   role,
   onSignOut,
 }: {
-  navItems: NavItem[];
-  pathname: string;
-  role: Role;
-  email?: string;
-  onSignOut: () => void;
+  navItems: NavItem[]
+  pathname: string
+  role: Role
+  onSignOut: () => void
 }) {
   return (
     <>
@@ -219,7 +218,7 @@ function MobileBottomNav({
       )}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border z-50 flex items-stretch h-14">
         {navItems.slice(0, 5).map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href
           return (
             <a
               key={item.href}
@@ -237,11 +236,8 @@ function MobileBottomNav({
               </div>
               <span className="text-[9px] leading-tight mt-0.5 font-medium">{item.label}</span>
             </a>
-          );
+          )
         })}
-        {navItems.length > 5 && (
-          <MoreMenu navItems={navItems.slice(5)} pathname={pathname} />
-        )}
         <button
           onClick={onSignOut}
           className="flex flex-col items-center justify-center flex-1 min-w-0 gap-0 text-muted-foreground"
@@ -252,56 +248,5 @@ function MobileBottomNav({
       </nav>
       <div className={cn("md:hidden", role === "dev" ? "h-[8.5rem]" : "h-14")} />
     </>
-  );
-}
-
-function MoreMenu({
-  navItems,
-  pathname,
-}: {
-  navItems: NavItem[];
-  pathname: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  return (
-    <div className="flex-1 min-w-0">
-      <button
-        ref={btnRef}
-        onClick={() => setOpen(!open)}
-        className="flex flex-col items-center justify-center w-full h-full gap-0 text-muted-foreground"
-      >
-        <div className="flex gap-0.5">
-          <span className="w-1 h-1 bg-current" />
-          <span className="w-1 h-1 bg-current" />
-          <span className="w-1 h-1 bg-current" />
-        </div>
-        <span className="text-[9px] leading-tight mt-0.5">Mas</span>
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute bottom-14 right-0 mb-2 bg-background border border-border shadow-lg min-w-40 z-50">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 text-sm",
-                  pathname === item.href
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
+  )
 }

@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
-import { useSchool } from "@/hooks/use-school";
-import { SCHOOL_TYPE_LABELS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import type { SchoolType } from "@/lib/constants";
+import { useSchool } from "@/hooks/use-school"
+import { SCHOOL_TYPE_LABELS } from "@/lib/constants"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import type { SchoolType } from "@/lib/constants"
 
 export function SchoolToggle() {
-  const { schoolType, setSchoolType } = useSchool();
+  const { schoolType, setSchoolType } = useSchool()
 
-  const types = Object.entries(SCHOOL_TYPE_LABELS) as [SchoolType, string][];
+  const types = Object.entries(SCHOOL_TYPE_LABELS) as [SchoolType, string][]
 
   return (
-    <div className="px-3 py-3 border-b border-sidebar-border">
-      <p className="text-[10px] text-muted-foreground mb-2 font-semibold tracking-wider uppercase">
+    <div className="px-2.5 py-2">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
         Modalidad
       </p>
-      <div className="flex bg-muted/80 p-0.5 rounded-lg">
+      <div className="flex bg-muted p-0.5 rounded-lg">
         {types.map(([key, label]) => (
           <button
             key={key}
@@ -40,5 +40,5 @@ export function SchoolToggle() {
         ))}
       </div>
     </div>
-  );
+  )
 }
