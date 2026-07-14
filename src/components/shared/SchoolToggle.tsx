@@ -31,7 +31,8 @@ export function SchoolToggle() {
             {schoolType === key && (
               <motion.div
                 layoutId="school-toggle"
-                className="absolute inset-0 bg-foreground rounded-sm"
+                className="absolute inset-0 rounded-sm"
+                style={{ backgroundColor: "var(--foreground)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
