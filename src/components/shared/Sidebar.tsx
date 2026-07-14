@@ -188,8 +188,8 @@ function NavButton({
         "flex items-center gap-3 px-3 py-2 text-sm",
         collapsed && "justify-center px-0 mx-auto w-10 h-10",
         active
-          ? "bg-accent text-foreground font-medium"
-          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+          ? "bg-foreground text-background font-medium"
+          : "text-muted-foreground hover:bg-foreground hover:text-background"
       )}
     >
       <item.icon className="h-4 w-4 shrink-0" />
