@@ -98,26 +98,26 @@ export function Sidebar() {
     <>
       <aside
         className={cn(
-          "hidden md:flex flex-col h-dvh bg-background border-r border-border z-40 sticky top-0 transition-[width] duration-200",
+          "hidden md:flex flex-col h-dvh bg-sidebar border-r border-sidebar-border z-40 sticky top-0 transition-[width] duration-300",
           collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex items-center justify-between px-4 h-16 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 h-14 border-b border-sidebar-border shrink-0">
           {collapsed ? (
-            <span className="w-2 h-2 bg-foreground" />
+            <span className="w-2 h-2 bg-primary rounded-full" />
           ) : (
-            <span className="font-semibold text-base tracking-tight flex items-center gap-2">
-              <span className="w-2 h-2 bg-foreground" />
+            <span className="font-bold text-sm tracking-tight flex items-center gap-2.5">
+              <span className="w-2 h-2 bg-primary rounded-full" />
               EduConecta
             </span>
           )}
           <button
-            className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground"
+            className="flex items-center justify-center w-7 h-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft
               className={cn(
-                "h-4 w-4 transition-transform duration-200",
+                "h-4 w-4 transition-transform duration-300",
                 collapsed && "rotate-180"
               )}
             />
@@ -141,7 +141,7 @@ export function Sidebar() {
           ))}
         </div>
 
-        <div className="border-t border-border py-2 px-2 space-y-0.5 shrink-0">
+        <div className="border-t border-sidebar-border py-2 px-2 space-y-0.5 shrink-0">
           {!collapsed && (
             <div className="px-3 py-2">
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
@@ -151,7 +151,7 @@ export function Sidebar() {
           <button
             onClick={signOut}
             className={cn(
-              "flex items-center gap-3 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground",
+              "flex items-center gap-3 w-full px-3 py-2 text-sm rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors",
               collapsed && "justify-center px-0"
             )}
           >
@@ -185,11 +185,11 @@ function NavButton({
     <a
       href={item.href}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 text-sm",
+        "flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200",
         collapsed && "justify-center px-0 mx-auto w-10 h-10",
         active
-          ? "bg-foreground text-background font-medium"
-          : "text-muted-foreground hover:bg-foreground hover:text-background"
+          ? "bg-primary/10 text-primary font-medium"
+          : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
       )}
     >
       <item.icon className="h-4 w-4 shrink-0" />
@@ -217,7 +217,7 @@ function MobileBottomNav({
           <SchoolToggle />
         </div>
       )}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 flex items-stretch h-14">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border z-50 flex items-stretch h-14">
         {navItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -225,17 +225,17 @@ function MobileBottomNav({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center flex-1 min-w-0 gap-0",
-                isActive ? "text-foreground" : "text-muted-foreground"
+                "flex flex-col items-center justify-center flex-1 min-w-0 gap-0 transition-colors",
+                isActive ? "text-primary" : "text-muted-foreground"
               )}
             >
               <div className="relative flex items-center justify-center">
                 {isActive && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-foreground" />
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-primary rounded-full" />
                 )}
                 <item.icon className="h-5 w-5" />
               </div>
-              <span className="text-[9px] leading-tight mt-0.5">{item.label}</span>
+              <span className="text-[9px] leading-tight mt-0.5 font-medium">{item.label}</span>
             </a>
           );
         })}
