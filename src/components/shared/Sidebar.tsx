@@ -201,6 +201,7 @@ function NavButton({
 function MobileBottomNav({
   navItems,
   pathname,
+  role,
   onSignOut,
 }: {
   navItems: NavItem[];
@@ -211,6 +212,11 @@ function MobileBottomNav({
 }) {
   return (
     <>
+      {role === "dev" && (
+        <div className="md:hidden fixed bottom-14 left-0 right-0 z-50">
+          <SchoolToggle />
+        </div>
+      )}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 flex items-stretch h-14">
         {navItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href;
@@ -244,7 +250,7 @@ function MobileBottomNav({
           <span className="text-[9px] leading-tight mt-0.5">Salir</span>
         </button>
       </nav>
-      <div className="md:hidden h-14" />
+      <div className={cn("md:hidden", role === "dev" ? "h-[8.5rem]" : "h-14")} />
     </>
   );
 }

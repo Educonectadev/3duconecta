@@ -9,14 +9,14 @@ export default function AlumnoDashboard() {
       title="Panel del Alumno"
       subtitle="Tu informacion academica"
       stats={[
-        { label: "Cursos", value: "0", icon: BookOpen },
-        { label: "Tareas Pendientes", value: "0", icon: ClipboardCheck },
-        { label: "Asistencia", value: "0%", icon: Calendar },
-        { label: "Promedio", value: "0", icon: TrendingUp },
+        { label: "Cursos", value: "0", icon: BookOpen, color: "blue" },
+        { label: "Tareas Pendientes", value: "0", icon: ClipboardCheck, color: "amber" },
+        { label: "Asistencia", value: "0%", icon: Calendar, color: "green" },
+        { label: "Promedio", value: "0", icon: TrendingUp, color: "violet" },
       ]}
     >
-      <h2 className="text-sm font-medium mb-4">Ultimas Notas</h2>
-      <p className="text-xs text-muted-foreground">No hay notas registradas aun.</p>
+      <h2 className="text-sm font-semibold mb-3">Ultimas Notas</h2>
+      <p className="text-sm text-muted-foreground">No hay notas registradas aun.</p>
     </Dashboard>
   );
 }

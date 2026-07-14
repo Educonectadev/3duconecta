@@ -9,8 +9,10 @@ export function PanelLayout({ children }: { children: ReactNode }) {
     <SchoolProvider>
       <div className="flex min-h-dvh">
         <Sidebar />
-        <main className="flex-1 min-w-0 p-4 md:p-6 lg:p-8">
-          {children}
+        <main className="flex-1 min-w-0 p-5 md:p-8 lg:p-10 overflow-y-auto">
+          <div className="max-w-[1400px] mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </SchoolProvider>

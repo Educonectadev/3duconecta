@@ -9,14 +9,14 @@ export default function PadreDashboard() {
       title="Panel de Padre de Familia"
       subtitle="Seguimiento academico de tus hijos"
       stats={[
-        { label: "Hijos", value: "0", icon: Users },
-        { label: "Pagos Pendientes", value: "0", icon: CreditCard },
-        { label: "Comunicados", value: "0", icon: MessageSquare },
-        { label: "Promedio General", value: "0", icon: TrendingUp },
+        { label: "Hijos", value: "0", icon: Users, color: "blue" },
+        { label: "Pagos Pendientes", value: "0", icon: CreditCard, color: "rose" },
+        { label: "Comunicados", value: "0", icon: MessageSquare, color: "amber" },
+        { label: "Promedio General", value: "0", icon: TrendingUp, color: "green" },
       ]}
     >
-      <h2 className="text-sm font-medium mb-4">Ultimos Comunicados</h2>
-      <p className="text-xs text-muted-foreground">No hay comunicados recientes.</p>
+      <h2 className="text-sm font-semibold mb-3">Ultimos Comunicados</h2>
+      <p className="text-sm text-muted-foreground">No hay comunicados recientes.</p>
     </Dashboard>
   );
 }
