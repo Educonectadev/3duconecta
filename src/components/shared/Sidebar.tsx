@@ -243,6 +243,13 @@ function MobileBottomNav({
         {navItems.length > 5 && (
           <MoreMenu navItems={navItems.slice(5)} pathname={pathname} />
         )}
+        <button
+          onClick={onSignOut}
+          className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0 text-muted-foreground"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="text-[10px] leading-tight">Salir</span>
+        </button>
       </nav>
       <div className="md:hidden h-16" />
     </>
